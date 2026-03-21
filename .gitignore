@@ -1,5 +1,3 @@
-gzip/
+/gzip/
 *.ubyte
-data/gzip/
-*.ubyte
-data/
+data
