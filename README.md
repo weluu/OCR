@@ -8,4 +8,4 @@ Dans un premier temps, être capable d’extraire individuellement les mots d’
 Puis, être en mesure de retranscrire des phrases complètes.
 
 ## Équipe
-Clément GASCHET | Angèle Simonet | Mathys KARIM GRISONI
+Clément GASCHET | Angèle Simonnet | Mathys KARIM GRISONI
