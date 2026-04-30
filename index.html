@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reconnaissance OCR</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f0e8;
+      --ink: #1a1209;
+      --amber: #c8841a;
+      --amber-light: #e89d3a;
+      --shadow: rgba(26,18,9,0.12);
+      --border: rgba(26,18,9,0.15);
+    }
+
+    body {
+      background-color: var(--cream);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .top-band {
+      height: 4px;
+      background: linear-gradient(90deg, var(--ink) 0%, var(--amber) 50%, var(--ink) 100%);
+    }
+
+    header {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 3rem 2rem 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header .eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--amber);
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+    }
+
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    header h1 em {
+      font-style: italic;
+      color: var(--amber);
+    }
+
+    header p {
+      margin-top: 0.8rem;
+      font-size: 0.95rem;
+      color: rgba(26,18,9,0.55);
+      font-weight: 300;
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 5rem;
+    }
+
+    /* Upload Zone */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 2px;
+      padding: 3.5rem 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: rgba(255,255,255,0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-zone::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(200,132,26,0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: var(--amber);
+      background: rgba(255,255,255,0.7);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px var(--shadow);
+    }
+
+    .upload-icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 1.2rem;
+    }
+
+    .upload-icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: var(--amber);
+    }
+
+    .upload-zone h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 400;
+      margin-bottom: 0.5rem;
+    }
+
+    .upload-zone p {
+      font-size: 0.85rem;
+      color: rgba(26,18,9,0.5);
+      font-weight: 300;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-upload {
+      display: inline-block;
+      background: var(--ink);
+      color: var(--cream);
+      padding: 0.65rem 2rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-upload:hover {
+      background: var(--amber);
+      transform: translateY(-1px);
+    }
+
+    #fileInput { display: none; }
+
+    /* Loader */
+    .loader {
+      display: none;
+      text-align: center;
+      padding: 3rem;
+    }
+
+    .loader.active { display: block; }
+
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--border);
+      border-top-color: var(--amber);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loader p {
+      font-size: 0.9rem;
+      color: rgba(26,18,9,0.5);
+      font-style: italic;
+    }
+
+    /* Results */
+    #resultSection { display: none; margin-top: 3rem; }
+
+    .result-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .result-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 400;
+    }
+
+    .result-header h3 span {
+      color: var(--amber);
+    }
+
+    .btn-group { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+    .btn-secondary {
+      font-size: 0.75rem;
+      color: rgba(26,18,9,0.55);
+      background: none;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.45rem 1rem;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+
+    .btn-primary {
+      font-size: 0.75rem;
+      color: var(--cream);
+      background: var(--amber);
+      border: none;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.5rem 1.2rem;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover { background: var(--ink); }
+
+    /* Annotated image */
+    .annotated-section {
+      margin-bottom: 2.5rem;
+    }
+
+    .annotated-section h4 {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(26,18,9,0.4);
+      margin-bottom: 1rem;
+    }
+
+    .annotated-section img {
+      max-width: 100%;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px var(--shadow);
+    }
+
+    /* Words grid */
+    .words-section h4 {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(26,18,9,0.4);
+      margin-bottom: 1rem;
+    }
+
+    .word-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .word-card {
+      background: white;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px var(--shadow);
+      overflow: hidden;
+      animation: fadeUp 0.3s ease forwards;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .word-card:hover {
+      box-shadow: 0 6px 20px var(--shadow);
+      transform: translateY(-2px);
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .word-card img {
+      width: 100%;
+      display: block;
+      background: white;
+      padding: 0.3rem;
+      cursor: zoom-in;
+    }
+
+    .word-card .word-label {
+      font-size: 0.6rem;
+      text-align: center;
+      color: rgba(26,18,9,0.35);
+      padding: 0.2rem 0.4rem;
+      border-top: 1px solid var(--border);
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    /* Error */
+    .error-box {
+      display: none;
+      background: #fff0f0;
+      border: 1px solid #ffcccc;
+      border-left: 4px solid #c0392b;
+      padding: 1rem 1.5rem;
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: #c0392b;
+    }
+
+    .error-box.active { display: block; }
+
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(26,18,9,0.92);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      cursor: zoom-out;
+    }
+
+    .lightbox.active { display: flex; }
+
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 85vh;
+      object-fit: contain;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+      animation: zoomIn 0.25s ease;
+      image-rendering: pixelated;
+    }
+
+    @keyframes zoomIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      color: rgba(245,240,232,0.7);
+      font-size: 1.5rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      transition: color 0.2s;
+    }
+
+    .lightbox-close:hover { color: var(--amber); }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      color: rgba(26,18,9,0.3);
+      border-top: 1px solid var(--border);
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-band"></div>
+
+  <header>
+    <p class="eyebrow">Mathys KARIM GRISONI · Angèle SIMONNET · Clément GASCHET</p>
+    <h1>Reconnaissance <em>OCR</em></h1>
+    <p>Segmentation automatique de mots manuscrits</p>
+  </header>
+
+  <main>
+    <!-- Upload Zone -->
+    <div class="upload-zone" id="uploadZone">
+      <div class="upload-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+          <polyline points="12 5 12 9 14 7"/>
+          <polyline points="12 5 10 7"/>
+        </svg>
+      </div>
+      <h2>Déposez votre image ici</h2>
+      <p>PNG · JPG — jusqu'à 20 Mo</p>
+      <button class="btn-upload" onclick="document.getElementById('fileInput').click()">
+        Choisir un fichier
+      </button>
+      <input type="file" id="fileInput" accept="image/*" />
+    </div>
+
+    <!-- Loader -->
+    <div class="loader" id="loader">
+      <div class="spinner"></div>
+      <p>Segmentation en cours…</p>
+    </div>
+
+    <!-- Error -->
+    <div class="error-box" id="errorBox"></div>
+
+    <!-- Results -->
+    <div id="resultSection">
+      <div class="result-header">
+        <h3>
+          <span id="wordCount">0</span> mots détectés
+        </h3>
+        <div class="btn-group">
+          <button class="btn-secondary" onclick="resetAll()">Nouvelle image</button>
+          <button class="btn-primary" onclick="downloadZip()">⬇ Télécharger les mots</button>
+        </div>
+      </div>
+
+      <!-- Annotated image -->
+      <div class="annotated-section">
+        <h4>Image annotée</h4>
+        <img id="annotatedImg" src="" alt="Image annotée"/>
+      </div>
+
+      <!-- Words grid -->
+      <div class="words-section">
+        <h4>Mots segmentés</h4>
+        <div class="word-grid" id="wordGrid"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img id="lightboxImg" src="" alt=""/>
+  </div>
+
+  <footer>Reconnaissance OCR — Segmentation de mots manuscrits</footer>
+
+  <script>
+    const API_URL = 'http://127.0.0.1:5000';
+
+    const zone      = document.getElementById('uploadZone');
+    const input     = document.getElementById('fileInput');
+    const loader    = document.getElementById('loader');
+    const errorBox  = document.getElementById('errorBox');
+    const resultSec = document.getElementById('resultSection');
+    const wordGrid  = document.getElementById('wordGrid');
+    const wordCount = document.getElementById('wordCount');
+    const annotImg  = document.getElementById('annotatedImg');
+
+    // Drag & Drop
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) processImage(file);
+    });
+
+    input.addEventListener('change', () => {
+      if (input.files[0]) processImage(input.files[0]);
+    });
+
+    async function processImage(file) {
+      // Reset UI
+      showError('');
+      resultSec.style.display = 'none';
+      loader.classList.add('active');
+      zone.style.display = 'none';
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const res = await fetch(`${API_URL}/segment`, {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+          throw new Error(data.error || 'Erreur serveur');
+        }
+
+        displayResults(data);
+      } catch (err) {
+        showError(`Erreur : ${err.message}. Vérifiez que le serveur Flask tourne sur ${API_URL}`);
+        zone.style.display = '';
+      } finally {
+        loader.classList.remove('active');
+      }
+    }
+
+    function displayResults(data) {
+      // Annotated image
+      annotImg.src = `data:image/png;base64,${data.annotated_image}`;
+      wordCount.textContent = data.nb_mots;
+
+      // Word grid
+      wordGrid.innerHTML = '';
+      data.mots.forEach((mot, i) => {
+        const card = document.createElement('div');
+        card.className = 'word-card';
+        card.style.animationDelay = `${i * 0.03}s`;
+
+        const img = document.createElement('img');
+        img.src = `data:image/png;base64,${mot.image_b64}`;
+        img.alt = `mot ${mot.index}`;
+        img.onclick = () => openLightbox(img.src);
+
+        const label = document.createElement('div');
+        label.className = 'word-label';
+        label.textContent = `#${String(mot.index).padStart(3, '0')}`;
+
+        card.appendChild(img);
+        card.appendChild(label);
+        wordGrid.appendChild(card);
+      });
+
+      resultSec.style.display = 'block';
+    }
+
+    function showError(msg) {
+      errorBox.textContent = msg;
+      errorBox.classList.toggle('active', !!msg);
+    }
+
+    function resetAll() {
+      resultSec.style.display = 'none';
+      zone.style.display = '';
+      input.value = '';
+      wordGrid.innerHTML = '';
+      showError('');
+    }
+
+    function downloadZip() {
+      window.open(`${API_URL}/download-zip`, '_blank');
+    }
+
+    function openLightbox(src) {
+      document.getElementById('lightboxImg').src = src;
+      document.getElementById('lightbox').classList.add('active');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+  </script>
+</body>
+</html>
