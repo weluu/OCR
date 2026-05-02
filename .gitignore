@@ -1,3 +1,6 @@
 /gzip/
 *.ubyte
 data
+app.py/
+settings.json/
+mnist_model.pth/
