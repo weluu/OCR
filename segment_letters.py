@@ -52,7 +52,7 @@ def segmenter_lettres(mots_dir: str = 'mot_seg', lettres_dir: str = 'lettres_dec
 
         gray = cv2.cvtColor(image_mot, cv2.COLOR_BGR2GRAY)
 
-        # Binarisation — lettres blanches sur fond noir
+        # Binarisation - lettres blanches sur fond noir
         _, binary = cv2.threshold(gray, 0, 255,
                                    cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
@@ -73,7 +73,7 @@ def segmenter_lettres(mots_dir: str = 'mot_seg', lettres_dir: str = 'lettres_dec
         x_start = 0
         W       = binary.shape[1]
         PADDING = 3
-        MIN_W   = 4
+        MIN_W   = 4                # À changer si les lettres sont mal segmenter
 
         for x, val in enumerate(v_proj):
             if not in_char and val > 0:
