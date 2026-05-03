@@ -1,6 +1,9 @@
 /gzip/
 *.ubyte
 data
-app.py/
+mot_seg/
+lettres_decoupees/
+__pycache__/
 settings.json/
 mnist_model.pth/
+*.pyc

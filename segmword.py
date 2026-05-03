@@ -80,7 +80,7 @@ def segmenter_mots(image_path, output_dir='mot_seg', debug=False):
 
 
 if __name__ == "__main__":
-    IMAGE_PATH = "sentence3.png"   # <- modifie ce chemin si besoin
+    IMAGE_PATH = "image\\chat.png"   # <- modifie ce chemin si besoin
 
     mots = segmenter_mots(
         image_path=IMAGE_PATH,

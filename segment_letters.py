@@ -73,7 +73,7 @@ def segmenter_lettres(mots_dir: str = 'mot_seg', lettres_dir: str = 'lettres_dec
         x_start = 0
         W       = binary.shape[1]
         PADDING = 3
-        MIN_W   = 8
+        MIN_W   = 4
 
         for x, val in enumerate(v_proj):
             if not in_char and val > 0:

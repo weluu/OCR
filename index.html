@@ -55,10 +55,7 @@
       letter-spacing: -0.01em;
     }
 
-    header h1 em {
-      font-style: italic;
-      color: var(--amber);
-    }
+    header h1 em { font-style: italic; color: var(--amber); }
 
     header p {
       margin-top: 0.8rem;
@@ -103,17 +100,8 @@
       box-shadow: 0 12px 40px var(--shadow);
     }
 
-    .upload-icon {
-      width: 60px;
-      height: 60px;
-      margin: 0 auto 1.2rem;
-    }
-
-    .upload-icon svg {
-      width: 100%;
-      height: 100%;
-      stroke: var(--amber);
-    }
+    .upload-icon { width: 60px; height: 60px; margin: 0 auto 1.2rem; }
+    .upload-icon svg { width: 100%; height: 100%; stroke: var(--amber); }
 
     .upload-zone h2 {
       font-family: 'Playfair Display', serif;
@@ -144,25 +132,15 @@
       transition: background 0.2s, transform 0.15s;
     }
 
-    .btn-upload:hover {
-      background: var(--amber);
-      transform: translateY(-1px);
-    }
-
+    .btn-upload:hover { background: var(--amber); transform: translateY(-1px); }
     #fileInput { display: none; }
 
     /* Loader */
-    .loader {
-      display: none;
-      text-align: center;
-      padding: 3rem;
-    }
-
+    .loader { display: none; text-align: center; padding: 3rem; }
     .loader.active { display: block; }
 
     .spinner {
-      width: 48px;
-      height: 48px;
+      width: 48px; height: 48px;
       border: 3px solid var(--border);
       border-top-color: var(--amber);
       border-radius: 50%;
@@ -171,17 +149,59 @@
     }
 
     @keyframes spin { to { transform: rotate(360deg); } }
+    .loader p { font-size: 0.9rem; color: rgba(26,18,9,0.5); font-style: italic; }
 
-    .loader p {
-      font-size: 0.9rem;
-      color: rgba(26,18,9,0.5);
+    /* Pipeline steps */
+    .pipeline {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 2.5rem;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.4);
+      overflow: hidden;
+    }
+
+    .pipeline-step {
+      flex: 1;
+      padding: 0.9rem 1rem;
+      text-align: center;
+      position: relative;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 500;
+      color: rgba(26,18,9,0.35);
+      border-right: 1px solid var(--border);
+      transition: all 0.3s;
+    }
+
+    .pipeline-step:last-child { border-right: none; }
+
+    .pipeline-step.active {
+      background: var(--ink);
+      color: var(--cream);
+    }
+
+    .pipeline-step.done {
+      background: var(--amber);
+      color: var(--cream);
+    }
+
+    .pipeline-step .step-num {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.1rem;
       font-style: italic;
     }
 
-    /* Results */
-    #resultSection { display: none; margin-top: 3rem; }
+    /* Results sections */
+    .result-section { display: none; margin-top: 2.5rem; }
+    .result-section.visible { display: block; }
 
-    .result-header {
+    .section-header {
       display: flex;
       align-items: baseline;
       justify-content: space-between;
@@ -192,15 +212,13 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .result-header h3 {
+    .section-header h3 {
       font-family: 'Playfair Display', serif;
       font-size: 1.4rem;
       font-weight: 400;
     }
 
-    .result-header h3 span {
-      color: var(--amber);
-    }
+    .section-header h3 span { color: var(--amber); }
 
     .btn-group { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 
@@ -217,10 +235,7 @@
       transition: all 0.2s;
     }
 
-    .btn-secondary:hover {
-      border-color: var(--amber);
-      color: var(--amber);
-    }
+    .btn-secondary:hover { border-color: var(--amber); color: var(--amber); }
 
     .btn-primary {
       font-size: 0.75rem;
@@ -236,11 +251,10 @@
     }
 
     .btn-primary:hover { background: var(--ink); }
+    .btn-primary:disabled { background: var(--border); cursor: not-allowed; }
 
     /* Annotated image */
-    .annotated-section {
-      margin-bottom: 2.5rem;
-    }
+    .annotated-section { margin-bottom: 2.5rem; }
 
     .annotated-section h4 {
       font-size: 0.75rem;
@@ -257,7 +271,7 @@
     }
 
     /* Words grid */
-    .words-section h4 {
+    .words-section h4, .letters-section h4 {
       font-size: 0.75rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
@@ -282,14 +296,9 @@
       transition: box-shadow 0.2s, transform 0.2s;
     }
 
-    .word-card:hover {
-      box-shadow: 0 6px 20px var(--shadow);
-      transform: translateY(-2px);
-    }
+    .word-card:hover { box-shadow: 0 6px 20px var(--shadow); transform: translateY(-2px); }
 
-    @keyframes fadeUp {
-      to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
     .word-card img {
       width: 100%;
@@ -307,6 +316,116 @@
       border-top: 1px solid var(--border);
       font-weight: 500;
       letter-spacing: 0.05em;
+    }
+
+    /* Letters per word */
+    .letters-section { margin-top: 1.5rem; }
+
+    .word-letters-group { margin-bottom: 1.5rem; }
+
+    .word-letters-group .word-title {
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(26,18,9,0.4);
+      margin-bottom: 0.6rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .letters-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .letter-card {
+      background: white;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 6px var(--shadow);
+      overflow: hidden;
+      width: 52px;
+      animation: fadeUp 0.3s ease forwards;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .letter-card:hover { box-shadow: 0 4px 14px var(--shadow); transform: translateY(-2px); }
+
+    .letter-card img {
+      width: 100%;
+      display: block;
+      background: white;
+      padding: 0.2rem;
+      cursor: zoom-in;
+    }
+
+    .letter-card .letter-label {
+      font-size: 0.55rem;
+      text-align: center;
+      color: rgba(26,18,9,0.3);
+      padding: 0.15rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ASCII result */
+    .ascii-result {
+      margin-top: 2rem;
+      background: var(--ink);
+      padding: 2rem 2.5rem;
+      border-left: 4px solid var(--amber);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ascii-result::before {
+      content: '"';
+      position: absolute;
+      top: -1rem;
+      left: 1rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 8rem;
+      color: rgba(200,132,26,0.1);
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .ascii-result .ascii-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 0.75rem;
+      font-weight: 500;
+    }
+
+    .ascii-result .ascii-text {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      color: var(--cream);
+      font-style: italic;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .ascii-result .ascii-copy {
+      margin-top: 1rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(245,240,232,0.4);
+      background: none;
+      border: 1px solid rgba(245,240,232,0.2);
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      padding: 0.4rem 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .ascii-result .ascii-copy:hover {
+      border-color: var(--amber);
+      color: var(--amber);
     }
 
     /* Error */
@@ -354,8 +473,7 @@
 
     .lightbox-close {
       position: absolute;
-      top: 1.5rem;
-      right: 1.5rem;
+      top: 1.5rem; right: 1.5rem;
       color: rgba(245,240,232,0.7);
       font-size: 1.5rem;
       cursor: pointer;
@@ -409,36 +527,81 @@
     <!-- Loader -->
     <div class="loader" id="loader">
       <div class="spinner"></div>
-      <p>Segmentation en cours…</p>
+      <p id="loaderText">Segmentation en cours…</p>
     </div>
 
     <!-- Error -->
     <div class="error-box" id="errorBox"></div>
 
-    <!-- Results -->
-    <div id="resultSection">
-      <div class="result-header">
-        <h3>
-          <span id="wordCount">0</span> mots détectés
-        </h3>
+    <!-- Pipeline indicator -->
+    <div class="pipeline" id="pipeline" style="display:none; margin-top:2rem;">
+      <div class="pipeline-step" id="step1">
+        <span class="step-num">1</span>
+        Mots
+      </div>
+      <div class="pipeline-step" id="step2">
+        <span class="step-num">2</span>
+        Lettres
+      </div>
+      <div class="pipeline-step" id="step3">
+        <span class="step-num">3</span>
+        Reconnaissance
+      </div>
+    </div>
+
+    <!-- Étape 1 : Mots -->
+    <div class="result-section" id="section1">
+      <div class="section-header">
+        <h3><span id="wordCount">0</span> mots détectés</h3>
         <div class="btn-group">
           <button class="btn-secondary" onclick="resetAll()">Nouvelle image</button>
-          <button class="btn-primary" onclick="downloadZip()">⬇ Télécharger les mots</button>
+          <button class="btn-secondary" onclick="downloadZip()">⬇ Télécharger</button>
+          <button class="btn-primary" id="btnLetters" onclick="runLetters()">Segmenter les lettres →</button>
         </div>
       </div>
 
-      <!-- Annotated image -->
       <div class="annotated-section">
         <h4>Image annotée</h4>
         <img id="annotatedImg" src="" alt="Image annotée"/>
       </div>
 
-      <!-- Words grid -->
       <div class="words-section">
         <h4>Mots segmentés</h4>
         <div class="word-grid" id="wordGrid"></div>
       </div>
     </div>
+
+    <!-- Étape 2 : Lettres -->
+    <div class="result-section" id="section2">
+      <div class="section-header">
+        <h3><span id="letterCount">0</span> lettres détectées</h3>
+        <div class="btn-group">
+          <button class="btn-primary" id="btnPredict" onclick="runPredict()">Reconnaître le texte →</button>
+        </div>
+      </div>
+
+      <div class="letters-section">
+        <h4>Lettres par mot</h4>
+        <div id="lettersGrid"></div>
+      </div>
+    </div>
+
+    <!-- Étape 3 : Résultat ASCII -->
+    <div class="result-section" id="section3">
+      <div class="section-header">
+        <h3>Texte <span>reconnu</span></h3>
+        <div class="btn-group">
+          <button class="btn-secondary" onclick="resetAll()">Nouvelle image</button>
+        </div>
+      </div>
+
+      <div class="ascii-result">
+        <div class="ascii-label">Reconstruction ASCII</div>
+        <div class="ascii-text" id="asciiText">—</div>
+        <button class="ascii-copy" onclick="copyText()">Copier</button>
+      </div>
+    </div>
+
   </main>
 
   <!-- Lightbox -->
@@ -455,11 +618,9 @@
     const zone      = document.getElementById('uploadZone');
     const input     = document.getElementById('fileInput');
     const loader    = document.getElementById('loader');
+    const loaderTxt = document.getElementById('loaderText');
     const errorBox  = document.getElementById('errorBox');
-    const resultSec = document.getElementById('resultSection');
-    const wordGrid  = document.getElementById('wordGrid');
-    const wordCount = document.getElementById('wordCount');
-    const annotImg  = document.getElementById('annotatedImg');
+    const pipeline  = document.getElementById('pipeline');
 
     // Drag & Drop
     zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
@@ -475,64 +636,172 @@
       if (input.files[0]) processImage(input.files[0]);
     });
 
+    // ── Étape 1 : Segmentation des mots ────────────────────────────────────
     async function processImage(file) {
-      // Reset UI
       showError('');
-      resultSec.style.display = 'none';
-      loader.classList.add('active');
+      hideAllSections();
+      setLoader(true, 'Segmentation des mots…');
       zone.style.display = 'none';
 
       const formData = new FormData();
       formData.append('image', file);
 
       try {
-        const res = await fetch(`${API_URL}/segment`, {
-          method: 'POST',
-          body: formData
-        });
-
+        const res  = await fetch(`${API_URL}/segment`, { method: 'POST', body: formData });
         const data = await res.json();
-
-        if (!res.ok || data.error) {
-          throw new Error(data.error || 'Erreur serveur');
-        }
-
-        displayResults(data);
+        if (!res.ok || data.error) throw new Error(data.error || 'Erreur serveur');
+        displayWords(data);
       } catch (err) {
-        showError(`Erreur : ${err.message}. Vérifiez que le serveur Flask tourne sur ${API_URL}`);
+        showError(`Erreur : ${err.message}`);
         zone.style.display = '';
       } finally {
-        loader.classList.remove('active');
+        setLoader(false);
       }
     }
 
-    function displayResults(data) {
-      // Annotated image
-      annotImg.src = `data:image/png;base64,${data.annotated_image}`;
-      wordCount.textContent = data.nb_mots;
+    function displayWords(data) {
+      document.getElementById('wordCount').textContent = data.nb_mots;
+      document.getElementById('annotatedImg').src = `data:image/png;base64,${data.annotated_image}`;
 
-      // Word grid
-      wordGrid.innerHTML = '';
+      const grid = document.getElementById('wordGrid');
+      grid.innerHTML = '';
       data.mots.forEach((mot, i) => {
-        const card = document.createElement('div');
+        const card  = document.createElement('div');
         card.className = 'word-card';
         card.style.animationDelay = `${i * 0.03}s`;
 
         const img = document.createElement('img');
-        img.src = `data:image/png;base64,${mot.image_b64}`;
-        img.alt = `mot ${mot.index}`;
+        img.src   = `data:image/png;base64,${mot.image_b64}`;
+        img.alt   = `mot ${mot.index}`;
         img.onclick = () => openLightbox(img.src);
 
         const label = document.createElement('div');
-        label.className = 'word-label';
+        label.className   = 'word-label';
         label.textContent = `#${String(mot.index).padStart(3, '0')}`;
 
         card.appendChild(img);
         card.appendChild(label);
-        wordGrid.appendChild(card);
+        grid.appendChild(card);
       });
 
-      resultSec.style.display = 'block';
+      showSection('section1');
+      setStep(1);
+      pipeline.style.display = 'flex';
+    }
+
+    // ── Étape 2 : Segmentation des lettres ────────────────────────────────
+    async function runLetters() {
+      document.getElementById('btnLetters').disabled = true;
+      setLoader(true, 'Segmentation des lettres…');
+
+      try {
+        const res  = await fetch(`${API_URL}/segment-letters`, { method: 'POST' });
+        const data = await res.json();
+        if (!res.ok || data.error) throw new Error(data.error || 'Erreur serveur');
+        displayLetters(data);
+      } catch (err) {
+        showError(`Erreur : ${err.message}`);
+      } finally {
+        setLoader(false);
+        document.getElementById('btnLetters').disabled = false;
+      }
+    }
+
+    function displayLetters(data) {
+      document.getElementById('letterCount').textContent = data.nb_lettres;
+
+      const grid = document.getElementById('lettersGrid');
+      grid.innerHTML = '';
+
+      let delay = 0;
+      data.mots.forEach((mot, mi) => {
+        const group = document.createElement('div');
+        group.className = 'word-letters-group';
+
+        const title = document.createElement('div');
+        title.className   = 'word-title';
+        title.textContent = `Mot #${String(mot.mot_index).padStart(3, '0')} — ${mot.nb_lettres} lettre(s)`;
+        group.appendChild(title);
+
+        const row = document.createElement('div');
+        row.className = 'letters-row';
+
+        mot.lettres.forEach((lettre, li) => {
+          const card = document.createElement('div');
+          card.className = 'letter-card';
+          card.style.animationDelay = `${delay * 0.02}s`;
+          delay++;
+
+          const img = document.createElement('img');
+          img.src   = `data:image/png;base64,${lettre.image_b64}`;
+          img.alt   = lettre.file;
+          img.onclick = () => openLightbox(img.src);
+
+          const label = document.createElement('div');
+          label.className   = 'letter-label';
+          label.textContent = `L${li}`;
+
+          card.appendChild(img);
+          card.appendChild(label);
+          row.appendChild(card);
+        });
+
+        group.appendChild(row);
+        grid.appendChild(group);
+      });
+
+      showSection('section2');
+      setStep(2);
+    }
+
+    // ── Étape 3 : Reconnaissance ───────────────────────────────────────────
+    async function runPredict() {
+      document.getElementById('btnPredict').disabled = true;
+      setLoader(true, 'Reconnaissance en cours…');
+
+      try {
+        const res  = await fetch(`${API_URL}/predict`, { method: 'POST' });
+        const data = await res.json();
+        if (!res.ok || data.error) throw new Error(data.error || 'Erreur serveur');
+        displayAscii(data);
+      } catch (err) {
+        showError(`Erreur : ${err.message}`);
+      } finally {
+        setLoader(false);
+        document.getElementById('btnPredict').disabled = false;
+      }
+    }
+
+    function displayAscii(data) {
+      document.getElementById('asciiText').textContent = data.texte;
+      showSection('section3');
+      setStep(3);
+    }
+
+    // ── Helpers UI ─────────────────────────────────────────────────────────
+    function showSection(id) {
+      document.getElementById(id).classList.add('visible');
+    }
+
+    function hideAllSections() {
+      ['section1', 'section2', 'section3'].forEach(id => {
+        document.getElementById(id).classList.remove('visible');
+      });
+      pipeline.style.display = 'none';
+    }
+
+    function setStep(n) {
+      ['step1', 'step2', 'step3'].forEach((id, i) => {
+        const el = document.getElementById(id);
+        el.classList.remove('active', 'done');
+        if (i + 1 < n)  el.classList.add('done');
+        if (i + 1 === n) el.classList.add('active');
+      });
+    }
+
+    function setLoader(active, text = '') {
+      loaderTxt.textContent = text;
+      loader.classList.toggle('active', active);
     }
 
     function showError(msg) {
@@ -541,15 +810,26 @@
     }
 
     function resetAll() {
-      resultSec.style.display = 'none';
+      hideAllSections();
       zone.style.display = '';
       input.value = '';
-      wordGrid.innerHTML = '';
       showError('');
+      document.getElementById('wordGrid').innerHTML = '';
+      document.getElementById('lettersGrid').innerHTML = '';
+      document.getElementById('asciiText').textContent = '—';
     }
 
     function downloadZip() {
       window.open(`${API_URL}/download-zip`, '_blank');
+    }
+
+    function copyText() {
+      const text = document.getElementById('asciiText').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.querySelector('.ascii-copy');
+        btn.textContent = 'Copié ✓';
+        setTimeout(() => btn.textContent = 'Copier', 1500);
+      });
     }
 
     function openLightbox(src) {
