@@ -6,13 +6,15 @@ def segmenter_mots(image_path, output_dir='mot_seg', debug=False):
     image = cv2.imread(image_path)
     if image is None:
         raise FileNotFoundError(f"Image introuvable : {image_path}")
+    
 
+#prétraitement de l'image
     h_img, w_img = image.shape[:2]
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
-    # Calcule la taille typique des lettres
+    # Calcule la taille des lettres
     num_labels, _, stats, _ = cv2.connectedComponentsWithStats(thresh, connectivity=8)
     hauteurs = []
     for i in range(1, num_labels):
@@ -31,7 +33,7 @@ def segmenter_mots(image_path, output_dir='mot_seg', debug=False):
 
     # Kernel basé sur la taille des lettres
     kernel_w = max(int(hauteur_mediane * 0.5), 10)  # était 0.4
-    kernel_h = max(int(hauteur_mediane * 0.4), 3)  # était 0.1, on monte à 0.4
+    kernel_h = max(int(hauteur_mediane * 0.4), 3)  # était 0.1
 
     kernel  = cv2.getStructuringElement(cv2.MORPH_RECT, (kernel_w, kernel_h))
     dilated = cv2.dilate(thresh, kernel, iterations=1)
@@ -50,9 +52,10 @@ def segmenter_mots(image_path, output_dir='mot_seg', debug=False):
         print("Aucun mot détecté après filtrage.")
         return []
 
-    tolerance = int(hauteur_mediane * 0.8)  # était 0.5
+    tolerance = int(hauteur_mediane * 0.8) #test precédent à 0.5 (marche pas)
     boites_triees = sorted(boites, key=lambda b: (b[1] // tolerance, b[0]))
 
+#permet d'enregistrer les images dans un autre dossiers pour les utiliser ensuite
     import shutil
     if os.path.exists(output_dir):
         shutil.rmtree(output_dir)
@@ -80,7 +83,7 @@ def segmenter_mots(image_path, output_dir='mot_seg', debug=False):
 
 
 if __name__ == "__main__":
-    IMAGE_PATH = "image\\chat.png"   # <- modifie ce chemin si besoin
+    IMAGE_PATH = "sentence3.png"   
 
     mots = segmenter_mots(
         image_path=IMAGE_PATH,
