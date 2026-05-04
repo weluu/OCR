@@ -82,7 +82,15 @@ def segmenter_lettres(mots_dir: str = 'mot_seg', lettres_dir: str = 'lettres_dec
         x_start = 0
         W       = binary.shape[1]
         PADDING = 3
+<<<<<<< HEAD
         MIN_W   = 4
+=======
+<<<<<<< HEAD
+        MIN_W   = 4                         # largeur minimale pour éviter les empiètement sur les espaces entre lettres
+=======
+        MIN_W   = 4                # À changer si les lettres sont mal segmenter
+>>>>>>> 9e085e63360ee5b2bb4d338f63d3aca257117aa7
+>>>>>>> 0e516f2f8106421f3331a66c8a32d5806cf60cc2
 
         for x, val in enumerate(v_proj):
             if not in_char and val > 0:
