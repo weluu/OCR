@@ -1,8 +1,8 @@
 import os
-os.environ["KERAS_BACKEND"] = "torch"
+os.environ["KERAS_BACKEND"] = "torch"  # doit être avant tout import keras/torch
+
 import torch
 import keras
-print(keras.backend.backend())  # debug pour voir si keras est bien charger doit print 'torch'
 import numpy as np
 import torch.nn.functional as F
 
@@ -10,14 +10,12 @@ from PIL import Image
 from scipy.ndimage import gaussian_filter
 from torchvision.transforms import v2
 
-os.environ["KERAS_BACKEND"] = "torch"
-
 # ── Configuration ─────────────────────────────────────────────────────────────
 LETTRES_DIR  = 'lettres_decoupees'
-WEIGHTS_PATH = 'Pytorch/best_emnist_model.weights.h5'  # CHemin du modèle à modifier si changement de chemin
+WEIGHTS_PATH = 'Pytorch/best_emnist_model.weights.h5'
 NUM_CLASSES  = 62
 
-# Classes EMNIST byclass — liste statique pour ne pas de charger le dataset entièrement
+# Classes EMNIST byclass — liste statique, pas besoin de charger le dataset
 CLASSES = (
     [str(d) for d in range(10)]         # 0-9
     + [chr(c) for c in range(65, 91)]   # A-Z
@@ -67,7 +65,7 @@ def charger_modele(weights_path: str) -> keras.Model:
     model(torch.zeros(1, 1, 28, 28), training=False)  # build
     model.load_weights(weights_path)
     model.trainable = False
-    print(f"Modele chargé depuis '{weights_path}'")
+    print(f"Modèle chargé depuis '{weights_path}'")
     return model
 
 
@@ -77,6 +75,7 @@ _transform = v2.Compose([
     v2.ToDtype(torch.float32, scale=True),
     v2.Normalize(mean=[0.1307], std=[0.3081])
 ])
+
 
 def patch_to_tensor(image_path: str) -> torch.Tensor:
     """
@@ -90,7 +89,7 @@ def patch_to_tensor(image_path: str) -> torch.Tensor:
     if arr.mean() > 127:
         arr = 255 - arr
 
-    # Crop serré
+    # Crop serré via lissage gaussien
     arr_smooth = gaussian_filter(arr.astype(np.float32), sigma=1)
     threshold  = max(20, arr_smooth.max() * 0.08)
     rows = np.any(arr_smooth > threshold, axis=1)
@@ -130,7 +129,7 @@ def predire_lettre(model: keras.Model, image_path: str) -> tuple[str, float]:
     with torch.no_grad():
         logits = model(tensor, training=False)
         probs  = F.softmax(logits, dim=1).cpu().squeeze()
-    idx  = probs.argmax().item()
+    idx = probs.argmax().item()
     return CLASSES[idx], round(probs[idx].item() * 100, 1)
 
 
@@ -138,7 +137,7 @@ def predire_lettre(model: keras.Model, image_path: str) -> tuple[str, float]:
 def reconstruire_texte(lettres_dir: str, model: keras.Model) -> str:
     """
     Parcourt lettres_decoupees/, prédit chaque lettre et reconstruit
-    la phrase ligne par ligne, mot par mot.
+    la phrase mot par mot.
 
     Format des fichiers attendu : mot_000_L00.png
     """
@@ -150,25 +149,21 @@ def reconstruire_texte(lettres_dir: str, model: keras.Model) -> str:
         print(f"Aucune lettre trouvée dans '{lettres_dir}'")
         return ""
 
-    # Regroupement par mot : { mot_idx: [ (lettre_idx, char, conf) ] }
     mots = {}
     for fname in fichiers:
-        parts    = fname.replace('.png', '').split('_')  # ['mot', '000', 'L00']
-        mot_idx  = int(parts[1])
-        l_idx    = int(parts[2][1:])  # retire le 'L'
+        parts   = fname.replace('.png', '').split('_')
+        mot_idx = int(parts[1])
+        l_idx   = int(parts[2][1:])
 
         path       = os.path.join(lettres_dir, fname)
         char, conf = predire_lettre(model, path)
-
         mots.setdefault(mot_idx, []).append((l_idx, char, conf))
         print(f"  {fname} → '{char}'  ({conf}%)")
 
-    # Reconstruction mot par mot dans l'ordre
     mots_texte = []
     for mot_idx in sorted(mots):
         lettres = sorted(mots[mot_idx], key=lambda x: x[0])
-        mot_str = "".join(char for _, char, _ in lettres)
-        mots_texte.append(mot_str)
+        mots_texte.append("".join(char for _, char, _ in lettres))
 
     texte = " ".join(mots_texte)
 
