@@ -2,7 +2,7 @@ import os
 os.environ["KERAS_BACKEND"] = "torch"
 import torch
 import keras
-print(keras.backend.backend())  # doit afficher 'torch'
+print(keras.backend.backend())  # debug pour voir si keras est bien charger doit print 'torch'
 import numpy as np
 import torch.nn.functional as F
 
@@ -14,10 +14,10 @@ os.environ["KERAS_BACKEND"] = "torch"
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 LETTRES_DIR  = 'lettres_decoupees'
-WEIGHTS_PATH = 'Pytorch/best_emnist_model.weights.h5'  # <- adapter si besoin
+WEIGHTS_PATH = 'Pytorch/best_emnist_model.weights.h5'  # CHemin du modèle à modifier si changement de chemin
 NUM_CLASSES  = 62
 
-# Classes EMNIST byclass — liste statique, pas besoin de charger le dataset
+# Classes EMNIST byclass — liste statique pour ne pas de charger le dataset entièrement
 CLASSES = (
     [str(d) for d in range(10)]         # 0-9
     + [chr(c) for c in range(65, 91)]   # A-Z
