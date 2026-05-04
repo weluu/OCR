@@ -72,7 +72,6 @@
       padding: 3rem 1.5rem 5rem;
     }
 
-    /* Upload Zone */
     .upload-zone {
       border: 2px dashed var(--border);
       border-radius: 2px;
@@ -135,7 +134,6 @@
     .btn-upload:hover { background: var(--amber); transform: translateY(-1px); }
     #fileInput { display: none; }
 
-    /* Loader */
     .loader { display: none; text-align: center; padding: 3rem; }
     .loader.active { display: block; }
 
@@ -151,11 +149,9 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     .loader p { font-size: 0.9rem; color: rgba(26,18,9,0.5); font-style: italic; }
 
-    /* Pipeline steps */
     .pipeline {
       display: flex;
       align-items: center;
-      gap: 0;
       margin-bottom: 2.5rem;
       border: 1px solid var(--border);
       background: rgba(255,255,255,0.4);
@@ -166,7 +162,6 @@
       flex: 1;
       padding: 0.9rem 1rem;
       text-align: center;
-      position: relative;
       font-size: 0.72rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
@@ -177,16 +172,8 @@
     }
 
     .pipeline-step:last-child { border-right: none; }
-
-    .pipeline-step.active {
-      background: var(--ink);
-      color: var(--cream);
-    }
-
-    .pipeline-step.done {
-      background: var(--amber);
-      color: var(--cream);
-    }
+    .pipeline-step.active { background: var(--ink); color: var(--cream); }
+    .pipeline-step.done { background: var(--amber); color: var(--cream); }
 
     .pipeline-step .step-num {
       display: block;
@@ -197,7 +184,6 @@
       font-style: italic;
     }
 
-    /* Results sections */
     .result-section { display: none; margin-top: 2.5rem; }
     .result-section.visible { display: block; }
 
@@ -219,7 +205,6 @@
     }
 
     .section-header h3 span { color: var(--amber); }
-
     .btn-group { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 
     .btn-secondary {
@@ -253,7 +238,6 @@
     .btn-primary:hover { background: var(--ink); }
     .btn-primary:disabled { background: var(--border); cursor: not-allowed; }
 
-    /* Annotated image */
     .annotated-section { margin-bottom: 2.5rem; }
 
     .annotated-section h4 {
@@ -270,7 +254,6 @@
       box-shadow: 0 4px 20px var(--shadow);
     }
 
-    /* Words grid */
     .words-section h4, .letters-section h4 {
       font-size: 0.75rem;
       letter-spacing: 0.2em;
@@ -297,6 +280,17 @@
     }
 
     .word-card:hover { box-shadow: 0 6px 20px var(--shadow); transform: translateY(-2px); }
+    .word-card[draggable="true"] { cursor: grab; }
+    .word-card[draggable="true"]:active { cursor: grabbing; }
+    .word-card.dragging { opacity: 0.4; transform: scale(0.97); box-shadow: none; }
+    .word-card.drag-over-card { border-color: var(--amber); box-shadow: 0 0 0 2px var(--amber); }
+
+    .word-order-hint {
+      font-size: 0.7rem;
+      color: rgba(26,18,9,0.35);
+      font-style: italic;
+      margin-bottom: 0.75rem;
+    }
 
     @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
@@ -318,9 +312,7 @@
       letter-spacing: 0.05em;
     }
 
-    /* Letters per word */
     .letters-section { margin-top: 1.5rem; }
-
     .word-letters-group { margin-bottom: 1.5rem; }
 
     .word-letters-group .word-title {
@@ -333,11 +325,7 @@
       border-bottom: 1px dashed var(--border);
     }
 
-    .letters-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-    }
+    .letters-row { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 
     .letter-card {
       background: white;
@@ -369,7 +357,6 @@
       border-top: 1px solid var(--border);
     }
 
-    /* ASCII result */
     .ascii-result {
       margin-top: 2rem;
       background: var(--ink);
@@ -382,8 +369,7 @@
     .ascii-result::before {
       content: '"';
       position: absolute;
-      top: -1rem;
-      left: 1rem;
+      top: -1rem; left: 1rem;
       font-family: 'Playfair Display', serif;
       font-size: 8rem;
       color: rgba(200,132,26,0.1);
@@ -423,12 +409,8 @@
       transition: all 0.2s;
     }
 
-    .ascii-result .ascii-copy:hover {
-      border-color: var(--amber);
-      color: var(--amber);
-    }
+    .ascii-result .ascii-copy:hover { border-color: var(--amber); color: var(--amber); }
 
-    /* Error */
     .error-box {
       display: none;
       background: #fff0f0;
@@ -442,7 +424,6 @@
 
     .error-box.active { display: block; }
 
-    /* Lightbox */
     .lightbox {
       display: none;
       position: fixed;
@@ -505,7 +486,6 @@
   </header>
 
   <main>
-    <!-- Upload Zone -->
     <div class="upload-zone" id="uploadZone">
       <div class="upload-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -524,29 +504,17 @@
       <input type="file" id="fileInput" accept="image/*" />
     </div>
 
-    <!-- Loader -->
     <div class="loader" id="loader">
       <div class="spinner"></div>
       <p id="loaderText">Segmentation en cours…</p>
     </div>
 
-    <!-- Error -->
     <div class="error-box" id="errorBox"></div>
 
-    <!-- Pipeline indicator -->
     <div class="pipeline" id="pipeline" style="display:none; margin-top:2rem;">
-      <div class="pipeline-step" id="step1">
-        <span class="step-num">1</span>
-        Mots
-      </div>
-      <div class="pipeline-step" id="step2">
-        <span class="step-num">2</span>
-        Lettres
-      </div>
-      <div class="pipeline-step" id="step3">
-        <span class="step-num">3</span>
-        Reconnaissance
-      </div>
+      <div class="pipeline-step" id="step1"><span class="step-num">1</span>Mots</div>
+      <div class="pipeline-step" id="step2"><span class="step-num">2</span>Lettres</div>
+      <div class="pipeline-step" id="step3"><span class="step-num">3</span>Reconnaissance</div>
     </div>
 
     <!-- Étape 1 : Mots -->
@@ -559,14 +527,13 @@
           <button class="btn-primary" id="btnLetters" onclick="runLetters()">Segmenter les lettres →</button>
         </div>
       </div>
-
       <div class="annotated-section">
         <h4>Image annotée</h4>
         <img id="annotatedImg" src="" alt="Image annotée"/>
       </div>
-
       <div class="words-section">
         <h4>Mots segmentés</h4>
+        <p class="word-order-hint">Glissez les cartes pour réordonner les mots avant la segmentation des lettres</p>
         <div class="word-grid" id="wordGrid"></div>
       </div>
     </div>
@@ -579,7 +546,6 @@
           <button class="btn-primary" id="btnPredict" onclick="runPredict()">Reconnaître le texte →</button>
         </div>
       </div>
-
       <div class="letters-section">
         <h4>Lettres par mot</h4>
         <div id="lettersGrid"></div>
@@ -594,17 +560,14 @@
           <button class="btn-secondary" onclick="resetAll()">Nouvelle image</button>
         </div>
       </div>
-
       <div class="ascii-result">
         <div class="ascii-label">Reconstruction ASCII</div>
         <div class="ascii-text" id="asciiText">—</div>
         <button class="ascii-copy" onclick="copyText()">Copier</button>
       </div>
     </div>
-
   </main>
 
-  <!-- Lightbox -->
   <div class="lightbox" id="lightbox" onclick="closeLightbox()">
     <button class="lightbox-close" onclick="closeLightbox()">✕</button>
     <img id="lightboxImg" src="" alt=""/>
@@ -622,7 +585,11 @@
     const errorBox  = document.getElementById('errorBox');
     const pipeline  = document.getElementById('pipeline');
 
-    // Drag & Drop
+    // ── Variables globales ─────────────────────────────────────────────────
+    let currentMots  = [];
+    let currentOrdre = [];
+
+    // ── Upload zone drag & drop ────────────────────────────────────────────
     zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
     zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
     zone.addEventListener('drop', e => {
@@ -636,7 +603,7 @@
       if (input.files[0]) processImage(input.files[0]);
     });
 
-    // ── Étape 1 : Segmentation des mots ────────────────────────────────────
+    // ── Étape 1 : Segmentation des mots ───────────────────────────────────
     async function processImage(file) {
       showError('');
       hideAllSections();
@@ -663,16 +630,29 @@
       document.getElementById('wordCount').textContent = data.nb_mots;
       document.getElementById('annotatedImg').src = `data:image/png;base64,${data.annotated_image}`;
 
+      currentMots  = [...data.mots];
+      currentOrdre = data.mots.map(m => m.index);
+
+      renderWordGrid();
+      showSection('section1');
+      setStep(1);
+      pipeline.style.display = 'flex';
+    }
+
+    function renderWordGrid() {
       const grid = document.getElementById('wordGrid');
       grid.innerHTML = '';
-      data.mots.forEach((mot, i) => {
-        const card  = document.createElement('div');
+
+      currentMots.forEach((mot, i) => {
+        const card = document.createElement('div');
         card.className = 'word-card';
         card.style.animationDelay = `${i * 0.03}s`;
+        card.draggable = true;
+        card.dataset.index = i;
 
         const img = document.createElement('img');
-        img.src   = `data:image/png;base64,${mot.image_b64}`;
-        img.alt   = `mot ${mot.index}`;
+        img.src     = `data:image/png;base64,${mot.image_b64}`;
+        img.alt     = `mot ${mot.index}`;
         img.onclick = () => openLightbox(img.src);
 
         const label = document.createElement('div');
@@ -682,11 +662,42 @@
         card.appendChild(img);
         card.appendChild(label);
         grid.appendChild(card);
-      });
 
-      showSection('section1');
-      setStep(1);
-      pipeline.style.display = 'flex';
+        card.addEventListener('dragstart', e => {
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', i);
+          setTimeout(() => card.classList.add('dragging'), 0);
+        });
+
+        card.addEventListener('dragend', () => {
+          card.classList.remove('dragging');
+          grid.querySelectorAll('.word-card').forEach(c => c.classList.remove('drag-over-card'));
+        });
+
+        card.addEventListener('dragover', e => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          grid.querySelectorAll('.word-card').forEach(c => c.classList.remove('drag-over-card'));
+          card.classList.add('drag-over-card');
+        });
+
+        card.addEventListener('dragleave', () => {
+          card.classList.remove('drag-over-card');
+        });
+
+        card.addEventListener('drop', e => {
+          e.preventDefault();
+          const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+          const toIdx   = parseInt(card.dataset.index);
+          if (fromIdx === toIdx) return;
+
+          const moved = currentMots.splice(fromIdx, 1)[0];
+          currentMots.splice(toIdx, 0, moved);
+
+          console.log('Ordre après drag & drop :', currentMots.map(m => m.index));
+          renderWordGrid();
+        });
+      });
     }
 
     // ── Étape 2 : Segmentation des lettres ────────────────────────────────
@@ -694,8 +705,15 @@
       document.getElementById('btnLetters').disabled = true;
       setLoader(true, 'Segmentation des lettres…');
 
+      currentOrdre = currentMots.map(mot => mot.index);
+      console.log('currentOrdre envoyé :', currentOrdre);
+
       try {
-        const res  = await fetch(`${API_URL}/segment-letters`, { method: 'POST' });
+        const res  = await fetch(`${API_URL}/segment-letters`, {
+          method : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body   : JSON.stringify({ ordre: currentOrdre })
+        });
         const data = await res.json();
         if (!res.ok || data.error) throw new Error(data.error || 'Erreur serveur');
         displayLetters(data);
@@ -714,7 +732,7 @@
       grid.innerHTML = '';
 
       let delay = 0;
-      data.mots.forEach((mot, mi) => {
+      data.mots.forEach(mot => {
         const group = document.createElement('div');
         group.className = 'word-letters-group';
 
@@ -733,8 +751,8 @@
           delay++;
 
           const img = document.createElement('img');
-          img.src   = `data:image/png;base64,${lettre.image_b64}`;
-          img.alt   = lettre.file;
+          img.src     = `data:image/png;base64,${lettre.image_b64}`;
+          img.alt     = lettre.file;
           img.onclick = () => openLightbox(img.src);
 
           const label = document.createElement('div');
@@ -759,8 +777,14 @@
       document.getElementById('btnPredict').disabled = true;
       setLoader(true, 'Reconnaissance en cours…');
 
+      console.log('currentOrdre envoyé à /predict :', currentOrdre);
+
       try {
-        const res  = await fetch(`${API_URL}/predict`, { method: 'POST' });
+        const res  = await fetch(`${API_URL}/predict`, {
+          method : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body   : JSON.stringify({ ordre: currentOrdre })
+        });
         const data = await res.json();
         if (!res.ok || data.error) throw new Error(data.error || 'Erreur serveur');
         displayAscii(data);
@@ -814,7 +838,9 @@
       zone.style.display = '';
       input.value = '';
       showError('');
-      document.getElementById('wordGrid').innerHTML = '';
+      currentMots  = [];
+      currentOrdre = [];
+      document.getElementById('wordGrid').innerHTML    = '';
       document.getElementById('lettersGrid').innerHTML = '';
       document.getElementById('asciiText').textContent = '—';
     }

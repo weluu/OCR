@@ -1,9 +1,10 @@
 import cv2
 import numpy as np
 import os
+import shutil
 
 
-def segmenter_lettres(mots_dir: str = 'mot_seg', lettres_dir: str = 'lettres_decoupees') -> list[dict]:
+def segmenter_lettres(mots_dir: str = 'mot_seg', lettres_dir: str = 'lettres_decoupees', ordre=None) -> list[dict]:
     """
     Prend le dossier de mots produit par segmword.py et découpe chaque mot
     en lettres individuelles sauvegardées dans lettres_dir.
@@ -11,6 +12,7 @@ def segmenter_lettres(mots_dir: str = 'mot_seg', lettres_dir: str = 'lettres_dec
     Args:
         mots_dir   : dossier contenant les PNG des mots (défaut: 'mot_seg')
         lettres_dir: dossier de sortie pour les lettres (défaut: 'lettres_decoupees')
+        ordre      : liste d'index optionnelle pour respecter l'ordre drag & drop
 
     Returns:
         liste de dict :
@@ -23,17 +25,24 @@ def segmenter_lettres(mots_dir: str = 'mot_seg', lettres_dir: str = 'lettres_dec
             ]
         }
     """
-    import shutil
-
+    # Repart d'un dossier vide à chaque appel
     if os.path.exists(lettres_dir):
         shutil.rmtree(lettres_dir)
     os.makedirs(lettres_dir)
 
-    os.makedirs(lettres_dir, exist_ok=True)
-
+    # Liste tous les mots disponibles
     fichiers_mots = sorted([
         f for f in os.listdir(mots_dir) if f.endswith('.png')
     ])
+
+    # Réordonne selon l'ordre drag & drop si fourni
+    if ordre is not None:
+        fichiers_tries = []
+        for idx in ordre:
+            fname = f"mot_{idx:03d}.png"
+            if fname in fichiers_mots:
+                fichiers_tries.append(fname)
+        fichiers_mots = fichiers_tries
 
     if not fichiers_mots:
         print(f"Aucun PNG trouvé dans '{mots_dir}'")
@@ -52,7 +61,7 @@ def segmenter_lettres(mots_dir: str = 'mot_seg', lettres_dir: str = 'lettres_dec
 
         gray = cv2.cvtColor(image_mot, cv2.COLOR_BGR2GRAY)
 
-        # Binarisation — lettres blanches sur fond noir
+        # Binarisation - lettres blanches sur fond noir
         _, binary = cv2.threshold(gray, 0, 255,
                                    cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
@@ -73,7 +82,7 @@ def segmenter_lettres(mots_dir: str = 'mot_seg', lettres_dir: str = 'lettres_dec
         x_start = 0
         W       = binary.shape[1]
         PADDING = 3
-        MIN_W   = 4
+        MIN_W   = 4                         # largeur minimale pour éviter les empiètement sur les espaces entre lettres
 
         for x, val in enumerate(v_proj):
             if not in_char and val > 0:
